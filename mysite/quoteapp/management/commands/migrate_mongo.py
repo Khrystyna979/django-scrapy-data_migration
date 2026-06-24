@@ -10,10 +10,10 @@ load_dotenv()
 
 MONGO_USER = os.environ.get('MONGO_USER')
 MONGO_PASSWORD = os.environ.get('MONGO_PASSWORD')
-DB_NAME = os.environ.get('DB_NAME')
+MONGO_DB = os.environ.get('MONGO_DB')
 DOMAIN = os.environ.get('DOMAIN')
 
-connect(host=f"mongodb+srv://{MONGO_USER}:{MONGO_PASSWORD}@{DOMAIN}/{DB_NAME}?appName=Cluster0", ssl=True)
+connect(host=f"mongodb+srv://{MONGO_USER}:{MONGO_PASSWORD}@{DOMAIN}/{MONGO_DB}?appName=Cluster0", ssl=True)
 
 # Джанго обов'язково шукає саме цей клас
 class Command(BaseCommand):
@@ -28,6 +28,10 @@ class Command(BaseCommand):
         all_mongo_quotes = quotes_collection.find()
         
         admin_user = User.objects.first()
+        
+        if not admin_user:
+            self.stdout.write('There are no users. First create a superuser.')
+            return
         
         for item in all_mongo_authors:
             author, _ = Author.objects.get_or_create(
@@ -58,3 +62,5 @@ class Command(BaseCommand):
                     for tag_name in item['tags']:
                         django_tag, _ = Tag.objects.get_or_create(name=tag_name)
                         quote.tags.add(django_tag)
+                        
+                        

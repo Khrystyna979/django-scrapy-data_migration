@@ -93,7 +93,7 @@ cp .env.example .env
 
 ### 3. Запусти PostgreSQL через Docker
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ### 4. Встанови залежності
